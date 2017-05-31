@@ -15,6 +15,7 @@
  * - (optional) operationName: the operationName to pre-fill in the GraphiQL UI
  * - (optional) result: the result of the query to pre-fill in the GraphiQL UI
  * - (optional) passHeader: a string that will be added to the header object.
+ * - (optional) passParams: a string that will be added to the subscription parameters object
  * For example "'Authorization': localStorage['Meteor.loginToken']" for meteor
  */
 
@@ -26,6 +27,7 @@ export type GraphiQLData = {
   operationName?: string,
   result?: Object,
   passHeader?: string,
+  passParams?: string,
 };
 
 // Current latest version of GraphiQL.
@@ -48,6 +50,7 @@ export function renderGraphiQL(data: GraphiQLData): string {
   const resultString = null;
   const operationName = data.operationName;
   const passHeader = data.passHeader ? data.passHeader : '';
+  const passParams = data.passParams ? data.passParams : '';
 
   /* eslint-disable max-len */
   return `
@@ -110,7 +113,8 @@ export function renderGraphiQL(data: GraphiQLData): string {
 
     if (${usingSubscriptions}) {
       var subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient('${subscriptionsEndpoint}', {
-        reconnect: true
+        reconnect: true,
+        ${passParams}
       });
       fetcher = window.GraphiQLSubscriptionsFetcher.graphQLFetcher(subscriptionsClient, graphQLFetcher);
     } else {
